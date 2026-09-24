@@ -1,0 +1,276 @@
+{
+  "appName": "Duo Grossesse",
+  "tagline": "Vivez la grossesse en équipe.",
+  "common": {
+    "yourPartner": "ta moitié",
+    "continue": "Continuer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "error": "Une erreur est survenue. Réessaie dans un instant.",
+    "you": "Toi",
+    "xp": "{{count}} XP",
+    "disclaimer": "Informations générales, qui ne remplacent pas l'avis d'un professionnel de santé."
+  },
+  "roles": {
+    "carrier": "Parent qui porte le bébé",
+    "partner": "Partenaire",
+    "carrierShort": "Porte le bébé",
+    "partnerShort": "Partenaire"
+  },
+  "config": {
+    "title": "Configuration requise",
+    "body": "L'application a besoin d'un projet Supabase. Copie .env.example en .env, renseigne EXPO_PUBLIC_SUPABASE_URL et EXPO_PUBLIC_SUPABASE_KEY, puis relance l'application."
+  },
+  "auth": {
+    "signInTitle": "Bon retour !",
+    "signUpTitle": "Créer un compte",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "displayName": "Prénom",
+    "signIn": "Se connecter",
+    "signUp": "Créer mon compte",
+    "toSignUp": "Pas encore de compte ? Inscris-toi",
+    "toSignIn": "Déjà un compte ? Connecte-toi",
+    "checkEmail": "Compte créé ! Confirme ton adresse via l'e-mail reçu, puis connecte-toi.",
+    "errors": {
+      "email": "Adresse e-mail invalide.",
+      "password": "Au moins 8 caractères.",
+      "displayName": "Indique ton prénom.",
+      "invalid_credentials": "E-mail ou mot de passe incorrect.",
+      "generic": "Impossible de continuer : {{message}}"
+    }
+  },
+  "onboarding": {
+    "roleTitle": "Qui es-tu dans l'aventure ?",
+    "roleSubtitle": "Les quêtes et conseils s'adaptent à ton rôle.",
+    "nameLabel": "Ton prénom",
+    "carrierDescription": "Tu suis ta grossesse et partages ton ressenti.",
+    "partnerDescription": "Tu relèves des quêtes pour soutenir et préparer l'arrivée du bébé.",
+    "pairTitle": "Formez votre duo",
+    "pairSubtitle": "Une personne crée votre espace, l'autre le rejoint avec le code.",
+    "create": "Créer notre espace",
+    "join": "Rejoindre avec un code",
+    "codeLabel": "Code d'invitation",
+    "codePlaceholder": "ABC123",
+    "pregnancyTitle": "Où en est la grossesse ?",
+    "pregnancySubtitle": "Indique l'une des deux dates. Tu pourras la modifier plus tard.",
+    "modeLmp": "Dernières règles",
+    "modeDue": "Terme prévu",
+    "dateLabel": "Date (JJ/MM/AAAA)",
+    "preview": "Soit {{weeks}} SA + {{days}} j · terme prévu le {{due}}",
+    "back": "Retour",
+    "errors": {
+      "invalid_date": "Date invalide ou hors limites.",
+      "future": "Cette date ne peut pas être dans le futur.",
+      "too_old": "Cette date est trop ancienne.",
+      "invalid_code": "Code introuvable.",
+      "couple_full": "Ce duo est déjà complet.",
+      "already_in_couple": "Tu fais déjà partie d'un duo.",
+      "role_required": "Choisis d'abord ton rôle."
+    }
+  },
+  "tabs": {
+    "home": "Accueil",
+    "quests": "Quêtes",
+    "journal": "Journal",
+    "team": "Équipe",
+    "settings": "Réglages"
+  },
+  "home": {
+    "greeting": "Bonjour {{name}} 👋",
+    "weekTitle": "{{weeks}} SA + {{days}} j",
+    "trimester_one": "1ᵉʳ trimestre",
+    "daysLeft": "J-{{count}} avant le terme",
+    "babySize": "Le bébé a la taille d'{{fruit}}",
+    "babyStats": "≈ {{length}} cm · {{weight}}",
+    "weightG": "{{count}} g",
+    "weightKg": "{{count}} kg",
+    "weightLess": "moins d'1 g",
+    "babyTitle": "Cette semaine chez le bébé",
+    "tipTitle": "Ton conseil de la semaine",
+    "teamGaugeTitle": "Objectif d'équipe de la semaine",
+    "teamGauge": "{{done}} / {{goal}} quêtes",
+    "teamStreak": "Série d'équipe : {{count}} j 🔥",
+    "partnerMood": "Humeur de {{name}}",
+    "noMood": "{{name}} n'a pas encore partagé son humeur aujourd'hui.",
+    "nextAppointment": "Prochain rendez-vous",
+    "invite": "Invite {{name}} avec le code",
+    "inviteAlone": "Invite ta moitié avec le code {{code}}",
+    "share": "Partager le code",
+    "shareMessage": "Rejoins-moi sur Duo Grossesse avec le code {{code}} 💞",
+    "seeQuests": "Voir mes quêtes",
+    "trimester_other": "{{count}}ᵉ trimestre",
+    "todoQuests_one": "1 quête à relever",
+    "todoQuests_other": "{{count}} quêtes à relever",
+    "todoQuests_zero": "Toutes les quêtes sont relevées 🎉"
+  },
+  "quests": {
+    "title": "Quêtes",
+    "subtitle": "Chaque quête rapproche l'équipe du but.",
+    "daily": "Aujourd'hui",
+    "weekly": "Cette semaine",
+    "milestones": "Étapes clés",
+    "team": "En équipe",
+    "partner": "Quêtes de {{name}}",
+    "complete": "Terminer",
+    "validate": "Valider (+{{bonus}} XP pour {{name}})",
+    "done": "Terminée",
+    "doneBy": "Faite par {{name}}",
+    "validated": "Validée ✨",
+    "waitingValidation": "En attente de validation",
+    "empty": "Aucune quête pour l'instant.",
+    "completedToast": "+{{xp}} XP ! Bien joué 🎉",
+    "errors": {
+      "already_completed": "Déjà terminée.",
+      "not_assigned": "Cette quête n'est pas pour toi.",
+      "cannot_validate_own": "Tu ne peux pas valider ta propre quête."
+    }
+  },
+  "journal": {
+    "title": "Journal",
+    "subtitle": "Partagé avec {{name}}.",
+    "moodQuestion": "Comment te sens-tu aujourd'hui ?",
+    "add": "Ajouter",
+    "kinds": {
+      "mood": "Humeur",
+      "symptom": "Symptôme",
+      "weight": "Poids",
+      "appointment": "Rendez-vous",
+      "note": "Note"
+    },
+    "fields": {
+      "note": "Un mot (optionnel)",
+      "symptom": "Symptôme (nausées, fatigue…)",
+      "intensity": "Intensité",
+      "weight": "Poids (kg)",
+      "title": "Intitulé (échographie, consultation…)",
+      "date": "Date (JJ/MM/AAAA)",
+      "location": "Lieu (optionnel)",
+      "text": "Ta note"
+    },
+    "intensity": {
+      "1": "Légère",
+      "2": "Modérée",
+      "3": "Forte"
+    },
+    "summary": {
+      "mood": "Humeur {{emoji}}",
+      "symptom": "{{label}} · {{intensity}}",
+      "weight": "{{kg}} kg",
+      "appointment": "{{title}} · {{date}}",
+      "note": "{{text}}"
+    },
+    "empty": "Le journal est vide. Commencez par partager votre humeur !",
+    "invalid": "Vérifie les champs saisis.",
+    "by": "{{name}} · {{date}}",
+    "delete": "Supprimer"
+  },
+  "team": {
+    "title": "Équipe",
+    "level": "Niveau {{level}}",
+    "xpProgress": "{{current}} / {{total}} XP",
+    "streak": "Série : {{count}} j",
+    "bestStreak": "Record : {{count}} j",
+    "teamStreak": "Série d'équipe",
+    "teamStreakHint": "Jours d'affilée où vous avez tous les deux relevé une quête.",
+    "badges": "Badges",
+    "activity": "Fil de l'équipe",
+    "noActivity": "Rien pour l'instant. Relevez votre première quête !",
+    "cheer": "Envoyer un encouragement 📣",
+    "cheerPlaceholder": "Un petit mot (optionnel)",
+    "cheerSent": "Encouragement envoyé !",
+    "waitingPartner": "En attente de ta moitié…",
+    "teamStreakValue": "🔥 Série d'équipe : {{count}} j"
+  },
+  "levels": {
+    "1": "Recrue",
+    "2": "Apprenti·e",
+    "3": "Équipier·e",
+    "4": "Co-pilote",
+    "5": "Pilier",
+    "6": "Super-parent",
+    "7": "Légende"
+  },
+  "badges": {
+    "duo_formed": {
+      "title": "Duo formé",
+      "description": "Vous avez rejoint le même espace."
+    },
+    "first_quest": {
+      "title": "Premier pas",
+      "description": "Première quête terminée."
+    },
+    "quests_10": {
+      "title": "Bien lancé·e",
+      "description": "10 quêtes terminées."
+    },
+    "quests_50": {
+      "title": "Inarrêtable",
+      "description": "50 quêtes terminées."
+    },
+    "streak_7": {
+      "title": "Semaine parfaite",
+      "description": "7 jours de suite avec une quête."
+    },
+    "team_streak_3": {
+      "title": "En rythme",
+      "description": "3 jours de série d'équipe."
+    },
+    "team_streak_7": {
+      "title": "Équipe soudée",
+      "description": "7 jours de série d'équipe."
+    },
+    "team_streak_30": {
+      "title": "Duo légendaire",
+      "description": "30 jours de série d'équipe."
+    },
+    "validator_5": {
+      "title": "Supporter",
+      "description": "5 quêtes de ta moitié validées."
+    },
+    "cheerleader": {
+      "title": "Pom-pom",
+      "description": "5 encouragements envoyés."
+    },
+    "first_appointment": {
+      "title": "Suivi au top",
+      "description": "Premier rendez-vous noté au journal."
+    },
+    "crib_ready": {
+      "title": "Lit monté",
+      "description": "Le lit du bébé est prêt."
+    },
+    "hospital_bag": {
+      "title": "Valise prête",
+      "description": "La valise de maternité est bouclée."
+    }
+  },
+  "activity": {
+    "couple_created": "{{name}} a créé votre espace.",
+    "member_joined": "{{name}} a rejoint l'équipe 🎉",
+    "quest_completed": "{{name}} a terminé « {{quest}} » (+{{xp}} XP)",
+    "quest_validated": "{{name}} a validé « {{quest}} » (+{{bonus}} XP bonus)",
+    "badge_earned": "{{name}} a débloqué le badge {{badge}}",
+    "journal_added": "{{name}} a ajouté au journal : {{summary}}",
+    "cheer": "{{name}} vous encourage 📣",
+    "cheerWithMessage": "{{name}} vous encourage 📣 « {{message}} »",
+    "unknown": "{{name}} a fait quelque chose de chouette."
+  },
+  "settings": {
+    "title": "Réglages",
+    "profile": "Profil",
+    "role": "Rôle",
+    "pregnancy": "Grossesse",
+    "lmp": "Dernières règles : {{date}}",
+    "due": "Terme prévu : {{date}}",
+    "editDates": "Modifier la date",
+    "invite": "Code d'invitation",
+    "inviteHint": "À partager avec ta moitié pour qu'elle rejoigne votre duo.",
+    "language": "Langue",
+    "signOut": "Se déconnecter",
+    "saved": "Enregistré ✔",
+    "about": "À propos"
+  }
+}
