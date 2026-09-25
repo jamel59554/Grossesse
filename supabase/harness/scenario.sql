@@ -180,6 +180,30 @@ begin
   end loop;
 end $$;
 
+-- Jetons push : chacun n'accède qu'aux siens
+select register_push_token('ExponentPushToken[alex]', 'android');
+do $$ begin
+  begin
+    perform register_push_token('pas-un-jeton', 'ios');
+    assert false, 'jeton invalide refusé';
+  exception when raise_exception then null;
+  end;
+  begin
+    insert into push_tokens (token, user_id, platform) values ('ExponentPushToken[x]', auth.uid(), 'ios');
+    assert false, 'écriture directe interdite';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000000a', false);
+do $$ begin
+  assert (select count(*) from push_tokens) = 0, 'Camille ne voit pas le jeton d''Alex';
+end $$;
+-- Même téléphone, autre compte : le jeton est réattribué
+select register_push_token('ExponentPushToken[alex]', 'android');
+do $$ begin
+  assert (select count(*) from push_tokens) = 1, 'jeton réattribué à Camille';
+end $$;
+
 set role anon;
 do $$ begin
   begin
@@ -187,6 +211,18 @@ do $$ begin
     assert false, 'anon ne doit pas appeler les RPC';
   exception when insufficient_privilege then null;
   end;
+  begin
+    perform register_push_token('ExponentPushToken[anon]', 'ios');
+    assert false, 'anon ne doit pas enregistrer de jeton';
+  exception when insufficient_privilege then null;
+  end;
 end $$;
 
 reset role;
+
+-- Supprimer le compte de la personne qui a créé le duo ne bloque pas
+delete from auth.users where id = '00000000-0000-0000-0000-00000000000a';
+do $$ begin
+  assert (select created_by from couples) is null, 'créateur remis à null';
+  assert (select count(*) from couple_members) = 1, 'Alex reste dans le duo';
+end $$;

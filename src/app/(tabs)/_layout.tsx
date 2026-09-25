@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { Toast } from '@/components/duo';
 import { useRealtimeSync } from '@/hooks/use-duo';
 import { useNames } from '@/hooks/use-names';
+import { usePushNotifications } from '@/hooks/use-push';
 import { describeActivity } from '@/lib/describe';
 import { usePalette } from '@/theme';
 import type { ActivityEvent } from '@/types/models';
@@ -29,6 +30,7 @@ export default function TabsLayout() {
     [t, nameOf, partnerName],
   );
   useRealtimeSync(onPartnerActivity);
+  usePushNotifications();
   const hideToast = useCallback(() => setToast(null), []);
 
   return (

@@ -42,6 +42,7 @@ export type Database = {
           id: number
           kind: string
           payload: Json
+          pushed_at: string | null
         }
         Insert: {
           actor_id?: string | null
@@ -50,6 +51,7 @@ export type Database = {
           id?: never
           kind: string
           payload?: Json
+          pushed_at?: string | null
         }
         Update: {
           actor_id?: string | null
@@ -58,6 +60,7 @@ export type Database = {
           id?: never
           kind?: string
           payload?: Json
+          pushed_at?: string | null
         }
         Relationships: [
           {
@@ -152,7 +155,7 @@ export type Database = {
         Row: {
           best_team_streak: number
           created_at: string
-          created_by: string
+          created_by: string | null
           id: string
           invite_code: string
           lmp_date: string
@@ -163,7 +166,7 @@ export type Database = {
         Insert: {
           best_team_streak?: number
           created_at?: string
-          created_by: string
+          created_by?: string | null
           id?: string
           invite_code: string
           lmp_date: string
@@ -174,7 +177,7 @@ export type Database = {
         Update: {
           best_team_streak?: number
           created_at?: string
-          created_by?: string
+          created_by?: string | null
           id?: string
           invite_code?: string
           lmp_date?: string
@@ -242,21 +245,53 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
+          push_enabled: boolean
           role: Database["public"]["Enums"]["member_role"] | null
         }
         Insert: {
           created_at?: string
           display_name?: string
           id: string
+          push_enabled?: boolean
           role?: Database["public"]["Enums"]["member_role"] | null
         }
         Update: {
           created_at?: string
           display_name?: string
           id?: string
+          push_enabled?: boolean
           role?: Database["public"]["Enums"]["member_role"] | null
         }
         Relationships: []
+      }
+      push_tokens: {
+        Row: {
+          platform: string
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          platform: string
+          token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          platform?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quest_instances: {
         Row: {
@@ -461,7 +496,7 @@ export type Database = {
         Returns: {
           best_team_streak: number
           created_at: string
-          created_by: string
+          created_by: string | null
           id: string
           invite_code: string
           lmp_date: string
@@ -487,7 +522,7 @@ export type Database = {
         Returns: {
           best_team_streak: number
           created_at: string
-          created_by: string
+          created_by: string | null
           id: string
           invite_code: string
           lmp_date: string
@@ -533,6 +568,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      register_push_token: {
+        Args: { p_platform: string; p_token: string }
+        Returns: undefined
+      }
       send_cheer: { Args: { p_message?: string }; Returns: undefined }
       touch_team_streak: {
         Args: { p_couple: string; p_today: string }
@@ -547,7 +586,7 @@ export type Database = {
         Returns: {
           best_team_streak: number
           created_at: string
-          created_by: string
+          created_by: string | null
           id: string
           invite_code: string
           lmp_date: string

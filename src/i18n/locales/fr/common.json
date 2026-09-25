@@ -11,7 +11,8 @@
     "error": "Une erreur est survenue. Réessaie dans un instant.",
     "you": "Toi",
     "xp": "{{count}} XP",
-    "disclaimer": "Informations générales, qui ne remplacent pas l'avis d'un professionnel de santé."
+    "disclaimer": "Informations générales, qui ne remplacent pas l'avis d'un professionnel de santé.",
+    "pickDate": "Choisir une date"
   },
   "roles": {
     "carrier": "Parent qui porte le bébé",
@@ -58,7 +59,6 @@
     "pregnancySubtitle": "Indique l'une des deux dates. Tu pourras la modifier plus tard.",
     "modeLmp": "Dernières règles",
     "modeDue": "Terme prévu",
-    "dateLabel": "Date (JJ/MM/AAAA)",
     "preview": "Soit {{weeks}} SA + {{days}} j · terme prévu le {{due}}",
     "back": "Retour",
     "errors": {
@@ -69,7 +69,9 @@
       "couple_full": "Ce duo est déjà complet.",
       "already_in_couple": "Tu fais déjà partie d'un duo.",
       "role_required": "Choisis d'abord ton rôle."
-    }
+    },
+    "lmpDateLabel": "Premier jour des dernières règles",
+    "dueDateLabel": "Date prévue d'accouchement"
   },
   "tabs": {
     "home": "Accueil",
@@ -146,7 +148,7 @@
       "intensity": "Intensité",
       "weight": "Poids (kg)",
       "title": "Intitulé (échographie, consultation…)",
-      "date": "Date (JJ/MM/AAAA)",
+      "date": "Date du rendez-vous",
       "location": "Lieu (optionnel)",
       "text": "Ta note"
     },
@@ -271,6 +273,19 @@
     "language": "Langue",
     "signOut": "Se déconnecter",
     "saved": "Enregistré ✔",
-    "about": "À propos"
+    "about": "À propos",
+    "notifications": "Notifications",
+    "pushPartner": "Alertes quand ma moitié agit",
+    "dailyReminder": "Rappel quotidien à {{hour}} h",
+    "pushUnavailable": {
+      "simulator": "Les alertes push nécessitent un vrai téléphone.",
+      "expo-go-android": "Sur Android, les alertes push nécessitent la version installée de l'app (pas Expo Go).",
+      "no-project": "Alertes push pas encore configurées pour cette version de l'app.",
+      "web": "Alertes push indisponibles sur le web."
+    }
+  },
+  "notifications": {
+    "dailyReminderTitle": "Tes quêtes du jour 💞",
+    "dailyReminderBody": "Quelques minutes pour ton duo : tes quêtes t'attendent."
   }
 }

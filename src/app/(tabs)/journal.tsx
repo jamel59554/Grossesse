@@ -1,23 +1,24 @@
-import { format } from 'date-fns';
+import { addMonths, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { DateField } from '@/components/date-field';
 import { AppText, Button, Card, Chip, ErrorState, Loading, Row, Screen, Section, TextField } from '@/components/ui';
 import { useJournal, useJournalActions } from '@/hooks/use-duo';
 import { useNames } from '@/hooks/use-names';
 import { journalSummary } from '@/lib/describe';
 import { journalSchemas, MOOD_EMOJIS, parseDecimal } from '@/lib/journal';
-import { parseFrenchDate, toISODate } from '@/lib/pregnancy';
+import { toISODate } from '@/lib/pregnancy';
 import { useMembership } from '@/providers/AuthProvider';
 import { spacing, usePalette } from '@/theme';
 import type { JournalKind, Json } from '@/types/models';
 
 const FORM_KINDS: Exclude<JournalKind, 'mood'>[] = ['symptom', 'weight', 'appointment', 'note'];
 
-type Draft = { label: string; intensity: number; kg: string; title: string; date: string; location: string; text: string };
-const EMPTY_DRAFT: Draft = { label: '', intensity: 1, kg: '', title: '', date: '', location: '', text: '' };
+type Draft = { label: string; intensity: number; kg: string; title: string; date: Date | null; location: string; text: string };
+const EMPTY_DRAFT: Draft = { label: '', intensity: 1, kg: '', title: '', date: null, location: '', text: '' };
 
 function buildPayload(kind: Exclude<JournalKind, 'mood'>, draft: Draft): unknown {
   switch (kind) {
@@ -26,10 +27,9 @@ function buildPayload(kind: Exclude<JournalKind, 'mood'>, draft: Draft): unknown
     case 'weight':
       return { kg: parseDecimal(draft.kg) };
     case 'appointment': {
-      const date = parseFrenchDate(draft.date);
       return {
         title: draft.title,
-        date: date ? toISODate(date) : '',
+        date: draft.date ? toISODate(draft.date) : '',
         ...(draft.location.trim() ? { location: draft.location } : {}),
       };
     }
@@ -47,6 +47,7 @@ export default function JournalScreen() {
   const { partnerName, nameOf } = useNames();
   const [kind, setKind] = useState<Exclude<JournalKind, 'mood'>>('symptom');
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
+  const [resetCount, setResetCount] = useState(0);
   const [moodNote, setMoodNote] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +75,10 @@ export default function JournalScreen() {
   }
 
   async function saveEntry() {
-    if (await save(kind, buildPayload(kind, draft))) setDraft(EMPTY_DRAFT);
+    if (await save(kind, buildPayload(kind, draft))) {
+      setDraft(EMPTY_DRAFT);
+      setResetCount((count) => count + 1);
+    }
   }
 
   if (journal.isPending) return <Loading />;
@@ -132,13 +136,13 @@ export default function JournalScreen() {
         {kind === 'appointment' ? (
           <>
             <TextField label={t('journal.fields.title')} value={draft.title} onChangeText={(title) => update({ title })} maxLength={80} />
-            <TextField
+            <DateField
+              key={resetCount}
               label={t('journal.fields.date')}
-              placeholder="JJ/MM/AAAA"
               value={draft.date}
-              onChangeText={(date) => update({ date })}
-              keyboardType="numbers-and-punctuation"
-              maxLength={10}
+              onChange={(date) => update({ date })}
+              minimumDate={addMonths(new Date(), -10)}
+              maximumDate={addMonths(new Date(), 12)}
             />
             <TextField label={t('journal.fields.location')} value={draft.location} onChangeText={(location) => update({ location })} maxLength={120} />
           </>

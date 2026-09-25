@@ -1,13 +1,20 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Share } from 'react-native';
+import { Platform, Share, Switch } from 'react-native';
 
 import { PregnancyDateForm } from '@/components/pregnancy-date-form';
 import { AppText, Button, Card, Chip, Loading, Row, Screen, TextField } from '@/components/ui';
 import { queryKeys } from '@/hooks/query-keys';
 import { useCouple } from '@/hooks/use-duo';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
+import {
+  DAILY_REMINDER_HOUR,
+  isDailyReminderEnabled,
+  pushAvailability,
+  setDailyReminder,
+  unregisterPush,
+} from '@/lib/notifications';
 import { dueDateFromLmp, formatFrenchDate, parseISODate, toISODate } from '@/lib/pregnancy';
 import { errorCode, supabase } from '@/lib/supabase';
 import { useAuth, useMembership } from '@/providers/AuthProvider';
@@ -25,6 +32,13 @@ export default function SettingsScreen() {
   const [role, setRole] = useState<MemberRole | null>(profile?.role ?? null);
   const [saved, setSaved] = useState(false);
   const [editingDates, setEditingDates] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(profile?.push_enabled ?? true);
+  const [reminder, setReminder] = useState(false);
+  const availability = pushAvailability();
+
+  useEffect(() => {
+    isDailyReminderEnabled().then(setReminder);
+  }, []);
 
   if (couple.isPending || !couple.couple) return <Loading />;
 
@@ -38,6 +52,22 @@ export default function SettingsScreen() {
       setSaved(true);
       await Promise.all([refreshMe(), queryClient.invalidateQueries({ queryKey: queryKeys.couple(coupleId) })]);
     }
+  }
+
+  async function togglePush(value: boolean) {
+    setPushEnabled(value);
+    const { error } = await supabase.from('profiles').update({ push_enabled: value }).eq('id', userId);
+    if (error) setPushEnabled(!value);
+    else await refreshMe();
+  }
+
+  async function toggleReminder(value: boolean) {
+    setReminder(value);
+    const enabled = await setDailyReminder(value, {
+      title: t('notifications.dailyReminderTitle'),
+      body: t('notifications.dailyReminderBody'),
+    });
+    setReminder(enabled);
   }
 
   async function saveDates(nextLmp: Date) {
@@ -115,6 +145,35 @@ export default function SettingsScreen() {
         />
       </Card>
 
+      {Platform.OS !== 'web' ? (
+        <Card>
+          <AppText variant="heading">{t('settings.notifications')}</AppText>
+          <Row style={{ justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+            <AppText style={{ flex: 1 }}>{t('settings.pushPartner')}</AppText>
+            <Switch
+              accessibilityLabel={t('settings.pushPartner')}
+              value={pushEnabled}
+              onValueChange={togglePush}
+              trackColor={{ true: palette.primary }}
+            />
+          </Row>
+          {availability !== 'ok' ? (
+            <AppText variant="caption" muted>
+              {t(`settings.pushUnavailable.${availability}`)}
+            </AppText>
+          ) : null}
+          <Row style={{ justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+            <AppText style={{ flex: 1 }}>{t('settings.dailyReminder', { hour: DAILY_REMINDER_HOUR })}</AppText>
+            <Switch
+              accessibilityLabel={t('settings.dailyReminder', { hour: DAILY_REMINDER_HOUR })}
+              value={reminder}
+              onValueChange={toggleReminder}
+              trackColor={{ true: palette.primary }}
+            />
+          </Row>
+        </Card>
+      ) : null}
+
       <Card>
         <AppText variant="heading">{t('settings.language')}</AppText>
         <Row>
@@ -124,7 +183,10 @@ export default function SettingsScreen() {
         </Row>
       </Card>
 
-      <Button variant="ghost" label={t('settings.signOut')} onPress={() => supabase.auth.signOut()} />
+      <Button variant="ghost" label={t('settings.signOut')} onPress={async () => {
+          await unregisterPush();
+          await supabase.auth.signOut();
+        }} />
 
       <AppText variant="caption" muted>
         {t('settings.about')} · {t('appName')} — {t('common.disclaimer')}

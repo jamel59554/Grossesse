@@ -47,5 +47,8 @@ App de suivi de grossesse pour le couple, qui gamifie l'implication du second pa
 - Toute règle de jeu (XP, séries, badges, génération de quêtes) vit dans `supabase/migrations/*.sql` (fonctions `security definer`). Le client ne fait qu'appeler les RPC ; `src/lib/gamification.ts` ne fait que de l'affichage (et doit rester aligné, p. ex. `validationBonus`).
 - Nouvelle quête : ajouter la ligne dans `supabase/seed.sql` **et** les textes dans `src/i18n/locales/fr/quests.json` (le test `i18n.test.ts` le vérifie).
 - Nouveau badge : `check_badges` (SQL), `src/data/badges.ts` et `badges.<slug>` dans `common.json`.
+- Textes des notifications push : `supabase/functions/notify-partner/messages.ts` (TS pur, testé par Jest). `index.ts` est du Deno, exclu de `tsc`/ESLint ; redéployer après modification (`npx supabase functions deploy notify-partner --no-verify-jwt`).
+- Toute nouvelle fonction SQL exposée : `revoke execute ... from public, anon` explicite puis `grant ... to authenticated` si l'app l'appelle (les privilèges par défaut ne suffisent pas).
+- Migrations déjà appliquées sur le projet hébergé : ne jamais les modifier, en ajouter une nouvelle (nom de fichier = version renvoyée par `list_migrations`).
 - Après une migration : `npm run gen:types` pour régénérer `src/types/database.ts`.
 - Vérifications : `npm run typecheck`, `npm run lint`, `npm test`, `npm run test:db`.

@@ -1,12 +1,15 @@
+import { addDays } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { AppText, Button, Chip, Row, TextField } from '@/components/ui';
+import { DateField } from '@/components/date-field';
+import { AppText, Button, Chip, Row } from '@/components/ui';
 import {
+  dueDateFromLmp,
   formatFrenchDate,
   getPregnancyProgress,
   lmpFromDueDate,
-  parseFrenchDate,
+  MAX_LMP_AGE_DAYS,
   validateLmp,
 } from '@/lib/pregnancy';
 
@@ -22,12 +25,13 @@ type Props = {
 export function PregnancyDateForm({ submitLabel, initialLmp, onSubmit }: Props) {
   const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>('lmp');
-  const [value, setValue] = useState(initialLmp ? formatFrenchDate(initialLmp) : '');
+  const [picked, setPicked] = useState<Date | null>(initialLmp ?? null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const parsed = parseFrenchDate(value);
-  const lmp = parsed ? (mode === 'lmp' ? parsed : lmpFromDueDate(parsed)) : null;
+  const today = new Date();
+  const minLmp = addDays(today, -MAX_LMP_AGE_DAYS);
+  const lmp = picked ? (mode === 'lmp' ? picked : lmpFromDueDate(picked)) : null;
   const validity = lmp ? validateLmp(lmp) : null;
   const preview = lmp && validity === 'ok' ? getPregnancyProgress(lmp) : null;
 
@@ -50,16 +54,27 @@ export function PregnancyDateForm({ submitLabel, initialLmp, onSubmit }: Props) 
   return (
     <>
       <Row>
-        <Chip label={t('onboarding.modeLmp')} selected={mode === 'lmp'} onPress={() => setMode('lmp')} />
-        <Chip label={t('onboarding.modeDue')} selected={mode === 'due'} onPress={() => setMode('due')} />
+        {(['lmp', 'due'] as const).map((m) => (
+          <Chip
+            key={m}
+            label={m === 'lmp' ? t('onboarding.modeLmp') : t('onboarding.modeDue')}
+            selected={mode === m}
+            onPress={() => {
+              if (m === mode) return;
+              // La date affichée change de sens : on la convertit pour rester cohérent.
+              setPicked((current) => (current ? (m === 'due' ? dueDateFromLmp(current) : lmpFromDueDate(current)) : null));
+              setMode(m);
+            }}
+          />
+        ))}
       </Row>
-      <TextField
-        label={t('onboarding.dateLabel')}
-        placeholder="JJ/MM/AAAA"
-        value={value}
-        onChangeText={setValue}
-        keyboardType="numbers-and-punctuation"
-        maxLength={10}
+      <DateField
+        key={mode}
+        label={mode === 'lmp' ? t('onboarding.lmpDateLabel') : t('onboarding.dueDateLabel')}
+        value={picked}
+        onChange={setPicked}
+        minimumDate={mode === 'lmp' ? minLmp : dueDateFromLmp(minLmp)}
+        maximumDate={mode === 'lmp' ? today : dueDateFromLmp(today)}
         error={error}
       />
       {preview ? (
@@ -71,7 +86,7 @@ export function PregnancyDateForm({ submitLabel, initialLmp, onSubmit }: Props) 
           })}
         </AppText>
       ) : null}
-      <Button label={submitLabel} onPress={submit} loading={loading} disabled={!parsed} />
+      <Button label={submitLabel} onPress={submit} loading={loading} disabled={!picked} />
     </>
   );
 }

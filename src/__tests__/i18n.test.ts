@@ -51,6 +51,7 @@ describe('fil d’activité', () => {
     kind,
     payload: payload as ActivityEvent['payload'],
     created_at: '2026-09-24T10:00:00Z',
+    pushed_at: null,
   });
 
   it('décrit une quête terminée avec le prénom du/de la partenaire', () => {
