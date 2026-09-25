@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 import { BADGES } from '@/data/badges';
@@ -9,7 +9,10 @@ import type { ActivityEvent } from '@/types/models';
 
 const root = join(__dirname, '..', '..');
 const seed = readFileSync(join(root, 'supabase/seed.sql'), 'utf8');
-const migration = readFileSync(join(root, 'supabase/migrations/20260924000000_init.sql'), 'utf8');
+const migrationsDir = join(root, 'supabase/migrations');
+const migration = readdirSync(migrationsDir)
+  .map((file) => readFileSync(join(migrationsDir, file), 'utf8'))
+  .join('\n');
 
 const seedSlugs = [...seed.matchAll(/^\s*\('([a-z0-9_]+)',/gm)].map((m) => m[1]);
 const sqlBadges = [...migration.matchAll(/grant_badge\([^'\n]*'([a-z0-9_]+)'\)/g)].map((m) => m[1]);

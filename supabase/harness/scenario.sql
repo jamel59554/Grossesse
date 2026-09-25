@@ -21,7 +21,7 @@ end $$;
 select invite_code from create_couple(current_date - 20 * 7, 'Europe/Paris') \gset
 
 do $$ begin
-  assert public.couple_week(public.my_couple_id()) = 20, 'semaine calculée depuis les DDR';
+  assert (select (current_date - lmp_date) / 7 from couples) = 20, 'DDR enregistrée';
   begin
     perform create_couple(current_date - 70, 'Europe/Paris');
     assert false, 'un second couple ne doit pas être possible';
@@ -75,7 +75,7 @@ begin
   assert n1 > 0, 'des quêtes sont générées';
   assert n1 = n2, 'refresh_quests est idempotent';
   assert (select count(*) from quest_instances
-          where assigned_to = auth.uid() and period_key = to_char(current_date, 'YYYY-MM-DD')) = 3,
+          where assigned_to = auth.uid() and period_key = to_char((now() at time zone 'Europe/Paris')::date, 'YYYY-MM-DD')) = 3,
     '3 quêtes quotidiennes pour Alex';
   assert not exists (select 1 from quest_instances qi join quest_templates t on t.slug = qi.template_slug
                      where qi.assigned_to = auth.uid() and t.target <> 'partner'),
@@ -150,19 +150,43 @@ end $$;
 
 -- Journal
 insert into journal_entries (couple_id, author_id, kind, payload)
-values (my_couple_id(), auth.uid(), 'appointment', '{"title": "Échographie T2"}');
+values ((select couple_id from couple_members where user_id = auth.uid()), auth.uid(), 'appointment', '{"title": "Échographie T2"}');
 
 do $$ begin
   assert exists (select 1 from activity_events where kind = 'journal_added'), 'journal dans le fil';
   assert (select count(*) from badges_earned where badge_slug = 'first_appointment') = 2, 'badge RDV';
   begin
     insert into journal_entries (couple_id, author_id, kind)
-    values (my_couple_id(), '00000000-0000-0000-0000-00000000000a', 'note');
+    values ((select couple_id from couple_members where user_id = auth.uid()), '00000000-0000-0000-0000-00000000000a', 'note');
     assert false, 'impossible d''écrire au nom de l''autre';
   exception when insufficient_privilege then null;
   end;
 end $$;
 
 select send_cheer('Tu gères !');
+
+-- Droits d'exécution : fonctions internes non appelables, RPC fermées à anon
+do $$
+declare fn text;
+begin
+  foreach fn in array array['my_couple_id()', 'couple_today(null::uuid)', 'award_xp(null::uuid, 1)',
+                            'check_badges(null::uuid, null::uuid)', 'generate_invite_code()']
+  loop
+    begin
+      execute 'select public.' || fn;
+      assert false, fn || ' ne doit pas être appelable';
+    exception when insufficient_privilege then null;
+    end;
+  end loop;
+end $$;
+
+set role anon;
+do $$ begin
+  begin
+    perform refresh_quests();
+    assert false, 'anon ne doit pas appeler les RPC';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
 
 reset role;

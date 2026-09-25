@@ -42,7 +42,9 @@ npx supabase start     # applique supabase/migrations et supabase/seed.sql
 # copier API_URL et PUBLISHABLE_KEY affichés dans .env
 ```
 
-**Projet Supabase hébergé** :
+**Projet Supabase hébergé** : le projet `duo-grossesse` (ref `ehthrpbpoiekuisxiyng`, région Paris) a déjà reçu les migrations et le seed. Récupérez l'URL et la clé « publishable » dans Project Settings → API.
+
+Pour un autre projet :
 
 ```bash
 npx supabase link --project-ref <ref>
